@@ -5,7 +5,7 @@ import theme from '../theme'
 const styles = StyleSheet.create({
   separator: {
     height: 7,
-    backgroundColor: theme.colors.listSeparator,
+    backgroundColor: theme.colors.lightGray,
   },
 })
 
