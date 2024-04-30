@@ -2,6 +2,7 @@ import { Text, TextInput, Pressable, View, StyleSheet } from 'react-native'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import theme from '../theme'
+import useSignIn from '../hooks/useSignIn'
 
 const styles = StyleSheet.create({
   container: {
@@ -47,17 +48,29 @@ const SignInForm = ({ onSubmit }) => {
   return (
     <View style={styles.container}>
       <TextInput
-        style={[styles.input, formik.touched.username && formik.errors.username ? styles.errorBorder : null]}
+        style={[
+          styles.input,
+          formik.touched.username && formik.errors.username
+            ? styles.errorBorder
+            : null,
+        ]}
         placeholder='username'
         value={formik.values.username}
         autoCapitalize='none'
         onChangeText={formik.handleChange('username')}
       />
       {formik.touched.username && formik.errors.username && (
-        <Text style={{ color: theme.colors.error }}>{formik.errors.username}</Text>
+        <Text style={{ color: theme.colors.error }}>
+          {formik.errors.username}
+        </Text>
       )}
       <TextInput
-        style={[styles.input, formik.touched.password && formik.errors.password ? styles.errorBorder : null]}
+        style={[
+          styles.input,
+          formik.touched.password && formik.errors.password
+            ? styles.errorBorder
+            : null,
+        ]}
         placeholder='password'
         value={formik.values.password}
         autoCapitalize='none'
@@ -65,7 +78,9 @@ const SignInForm = ({ onSubmit }) => {
         onChangeText={formik.handleChange('password')}
       />
       {formik.touched.password && formik.errors.password && (
-        <Text style={{ color: theme.colors.error }}>{formik.errors.password}</Text>
+        <Text style={{ color: theme.colors.error }}>
+          {formik.errors.password}
+        </Text>
       )}
       <Pressable style={styles.submitButton} onPress={formik.handleSubmit}>
         <Text style={{ color: 'white' }}>Sign in</Text>
@@ -75,8 +90,17 @@ const SignInForm = ({ onSubmit }) => {
 }
 
 const SignIn = () => {
-  const onSubmit = (values) => {
-    console.log(values)
+  const [signIn] = useSignIn()
+
+  const onSubmit = async (values) => {
+    const { username, password } = values
+
+    try {
+      const { data } = await signIn({ username, password });
+      console.log(data);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   return <SignInForm onSubmit={onSubmit} />
