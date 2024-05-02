@@ -39,7 +39,7 @@ const initialValues = {
   password: '',
 }
 
-const SignInForm = ({ onSubmit }) => {
+export const SignInForm = ({ onSubmit }) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
