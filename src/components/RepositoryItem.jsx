@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
 
 const RepositoryItem = ({ item }) => {
   return (
-    <>
+    <View testID={'repositoryItem'}>
       <View style={styles.generalInfoContainer}>
         <Image
           style={styles.avatar}
@@ -67,7 +67,7 @@ const RepositoryItem = ({ item }) => {
         <RatingView count={item.reviewCount} label={"Reviews"} />
         <RatingView count={item.ratingAverage} label={"Rating"} />
       </View>
-    </>
+    </View>
   )
 }
 
