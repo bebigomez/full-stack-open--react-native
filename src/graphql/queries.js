@@ -5,6 +5,7 @@ export const GET_REPOSITORIES = gql`
     repositories {
       edges {
         node {
+          id
           ownerAvatarUrl
           fullName
           description
@@ -18,6 +19,24 @@ export const GET_REPOSITORIES = gql`
     }
   }
 `
+
+export const GET_SINGLE_REPOSITORY = gql`
+  query getSingleRepository($repositoryId: ID!) {
+    repository(id: $repositoryId) {
+      id
+      ownerAvatarUrl
+      fullName
+      description
+      language
+      stargazersCount
+      forksCount
+      reviewCount
+      ratingAverage
+      url
+    }
+  }
+`
+
 export const ME = gql`
   query {
     me {
