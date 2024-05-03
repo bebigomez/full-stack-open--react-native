@@ -33,6 +33,20 @@ export const GET_SINGLE_REPOSITORY = gql`
       reviewCount
       ratingAverage
       url
+      reviews {
+        edges {
+          node {
+            id
+            rating
+            createdAt
+            text
+            user {
+              id
+              username
+            }
+          }
+        }
+      }
     }
   }
 `
