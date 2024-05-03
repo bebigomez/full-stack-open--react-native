@@ -31,7 +31,10 @@ const AppBar = () => {
         {!loading && !data.me ? (
           <AppBarTab label={'Sign in'} link={'/signin'} />
         ) : (
-          <AppBarTab label={'Sign out'} />
+          <>
+            <AppBarTab label={'Create a review'} link={'/create-review'} />
+            <AppBarTab label={'Sign out'} />
+          </>
         )}
       </ScrollView>
     </View>
