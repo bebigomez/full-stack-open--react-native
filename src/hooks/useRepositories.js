@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_REPOSITORIES } from '../graphql/queries'
 
-const useRepositories = () => {
-  const { data, loading, error, refetch } = useQuery(GET_REPOSITORIES)
+const useRepositories = (variables) => {
+  const { data, loading, error, refetch } = useQuery(GET_REPOSITORIES, {
+    variables,
+  })
   const [repositories, setRepositories] = useState()
 
   useEffect(() => {

@@ -3,6 +3,9 @@ import useRepositories from '../hooks/useRepositories'
 import RepositoryItem from './RepositoryItem'
 import theme from '../theme'
 
+import { Picker } from '@react-native-picker/picker'
+import { useState } from 'react'
+
 const styles = StyleSheet.create({
   separator: {
     height: 7,
@@ -10,7 +13,9 @@ const styles = StyleSheet.create({
   },
 })
 
-export const RepositoryListContainer = ({ repositories }) => {
+export const RepositoryListContainer = ({ repositories, setVariables }) => {
+  const [selectedPrinciple, setSelectedPrinciple] = useState('latest')
+
   // Get the nodes from the edges array
   const repositoryNodes = repositories
     ? repositories.edges.map((edge) => edge.node)
@@ -18,19 +23,63 @@ export const RepositoryListContainer = ({ repositories }) => {
 
   const ItemSeparator = () => <View style={styles.separator} />
 
+  const handleChange = (itemValue) => {
+    setSelectedPrinciple(itemValue)
+
+    if (itemValue === 'latest') {
+      setVariables({
+        orderBy: 'CREATED_AT',
+        orderDirection: 'DESC',
+      })
+    } else if (itemValue === 'highestRated') {
+      setVariables({
+        orderBy: 'RATING_AVERAGE',
+        orderDirection: 'DESC',
+      })
+    } else if (itemValue === 'lowestRated') {
+      setVariables({
+        orderBy: 'RATING_AVERAGE',
+        orderDirection: 'ASC',
+      })
+    }
+  }
+
+  const sortPicker = () => {
+    return (
+      <Picker selectedValue={selectedPrinciple} onValueChange={handleChange}>
+        <Picker.Item label='Latest' value={'latest'} />
+        <Picker.Item label='Highest rated' value={'highestRated'} />
+        <Picker.Item label='Lowest rated' value={'lowestRated'} />
+      </Picker>
+    )
+  }
+
   return (
-    <FlatList
-      data={repositoryNodes}
-      ItemSeparatorComponent={ItemSeparator}
-      renderItem={({ item }) => <RepositoryItem item={item} />}
-    />
+    <>
+      <FlatList
+        data={repositoryNodes}
+        ItemSeparatorComponent={ItemSeparator}
+        renderItem={({ item }) => <RepositoryItem item={item} />}
+        ListHeaderComponent={sortPicker}
+      />
+    </>
   )
 }
 
 const RepositoryList = () => {
-  const { repositories } = useRepositories()
+  const [variables, setVariables] = useState({
+    orderBy: 'CREATED_AT',
+    orderDirection: 'DESC',
+  })
 
-  return <RepositoryListContainer repositories={repositories} />
+  const { repositories } = useRepositories(variables)
+
+  return (
+    <RepositoryListContainer
+      repositories={repositories}
+      setVariables={setVariables}
+    />
+  )
 }
 
 export default RepositoryList

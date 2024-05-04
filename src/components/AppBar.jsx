@@ -27,7 +27,6 @@ const AppBar = () => {
     <View style={styles.container}>
       <ScrollView horizontal>
         <AppBarTab label={'Repositories'} link={'/'} />
-
         {!loading && !data.me ? (
           <>
             <AppBarTab label={'Sign in'} link={'/signin'} />
