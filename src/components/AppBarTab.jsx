@@ -14,10 +14,14 @@ const AppBarTab = ({ label, link }) => {
   const authStorage = useAuthStorage()
   const apolloClient = useApolloClient()
 
-  const handlePress = () => {
+  const handlePress = async () => {
     if (label === 'Sign out') {
-      authStorage.removeAccessToken()
-      apolloClient.resetStore()
+      try {
+        // await authStorage.removeAccessToken()
+        await apolloClient.resetStore()
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 

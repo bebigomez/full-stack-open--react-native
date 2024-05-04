@@ -29,7 +29,10 @@ const AppBar = () => {
         <AppBarTab label={'Repositories'} link={'/'} />
 
         {!loading && !data.me ? (
-          <AppBarTab label={'Sign in'} link={'/signin'} />
+          <>
+            <AppBarTab label={'Sign in'} link={'/signin'} />
+            <AppBarTab label={'Sign Up'} link={'/signup'} />
+          </>
         ) : (
           <>
             <AppBarTab label={'Create a review'} link={'/create-review'} />
