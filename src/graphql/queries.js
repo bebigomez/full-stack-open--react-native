@@ -6,7 +6,11 @@ export const GET_REPOSITORIES = gql`
     $orderDirection: OrderDirection
     $searchKeyword: String
   ) {
-    repositories(orderBy: $orderBy, orderDirection: $orderDirection, searchKeyword: $searchKeyword) {
+    repositories(
+      orderBy: $orderBy
+      orderDirection: $orderDirection
+      searchKeyword: $searchKeyword
+    ) {
       edges {
         node {
           id
@@ -56,9 +60,23 @@ export const GET_SINGLE_REPOSITORY = gql`
 `
 
 export const ME = gql`
-  query {
+  query getCurrentUser($includeReviews: Boolean = true) {
     me {
       username
+      reviews @include(if: $includeReviews) {
+        edges {
+          node {
+            id
+            rating
+            createdAt
+            text
+            user {
+              id
+              username
+            }
+          }
+        }
+      }
     }
   }
 `

@@ -35,6 +35,7 @@ const AppBar = () => {
         ) : (
           <>
             <AppBarTab label={'Create a review'} link={'/create-review'} />
+            <AppBarTab label={'My reviews'} link={'/myreviews'} />
             <AppBarTab label={'Sign out'} />
           </>
         )}
