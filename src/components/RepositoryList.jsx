@@ -1,10 +1,14 @@
 import { FlatList, View, StyleSheet } from 'react-native'
-import useRepositories from '../hooks/useRepositories'
-import RepositoryItem from './RepositoryItem'
-import theme from '../theme'
 
-import { Picker } from '@react-native-picker/picker'
-import { useState } from 'react'
+import React, { useState } from 'react'
+import { useDebounce } from 'use-debounce'
+import useRepositories from '../hooks/useRepositories'
+
+import RepositoryItem from './RepositoryItem'
+import SortPicker from './SortPicker'
+import { Searchbar } from 'react-native-paper'
+
+import theme from '../theme'
 
 const styles = StyleSheet.create({
   separator: {
@@ -13,58 +17,126 @@ const styles = StyleSheet.create({
   },
 })
 
-export const RepositoryListContainer = ({ repositories, setVariables }) => {
-  const [selectedPrinciple, setSelectedPrinciple] = useState('latest')
+// const RepositoryListHeader = ({
+//   handleSearchBar,
+//   searchQuery,
+//   selectedPrinciple,
+//   setSelectedPrinciple,
+//   setVariables,
+// }) => {
+//   return (
+//     <>
+//       <Searchbar
+//         placeholder='Search'
+//         onChangeText={handleSearchBar}
+//         value={searchQuery}
+//       />
+//       <SortPicker
+//         selectedPrinciple={selectedPrinciple}
+//         setSelectedPrinciple={setSelectedPrinciple}
+//         setVariables={setVariables}
+//       />
+//     </>
+//   )
+// }
 
-  // Get the nodes from the edges array
-  const repositoryNodes = repositories
-    ? repositories.edges.map((edge) => edge.node)
-    : []
-
-  const ItemSeparator = () => <View style={styles.separator} />
-
-  const handleChange = (itemValue) => {
-    setSelectedPrinciple(itemValue)
-
-    if (itemValue === 'latest') {
-      setVariables({
-        orderBy: 'CREATED_AT',
-        orderDirection: 'DESC',
-      })
-    } else if (itemValue === 'highestRated') {
-      setVariables({
-        orderBy: 'RATING_AVERAGE',
-        orderDirection: 'DESC',
-      })
-    } else if (itemValue === 'lowestRated') {
-      setVariables({
-        orderBy: 'RATING_AVERAGE',
-        orderDirection: 'ASC',
-      })
-    }
+export class RepositoryListContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedPrinciple: 'latest'
+    };
   }
 
-  const sortPicker = () => {
+  handleSearchBar = (value) => {
+    this.props.setSearchQuery(value);
+  }
+
+  RepositoryListHeader = () => {
     return (
-      <Picker selectedValue={selectedPrinciple} onValueChange={handleChange}>
-        <Picker.Item label='Latest' value={'latest'} />
-        <Picker.Item label='Highest rated' value={'highestRated'} />
-        <Picker.Item label='Lowest rated' value={'lowestRated'} />
-      </Picker>
+      <>
+        <Searchbar
+          placeholder='Search'
+          onChangeText={this.handleSearchBar}
+          value={this.props.searchQuery}
+        />
+        <SortPicker
+          selectedPrinciple={this.state.selectedPrinciple}
+          setSelectedPrinciple={(selectedPrinciple) => this.setState({ selectedPrinciple })}
+          setVariables={this.props.setVariables}
+        />
+      </>
     )
   }
 
-  return (
-    <>
-      <FlatList
-        data={repositoryNodes}
-        ItemSeparatorComponent={ItemSeparator}
-        renderItem={({ item }) => <RepositoryItem item={item} />}
-        ListHeaderComponent={sortPicker}
-      />
-    </>
-  )
+  render() {
+    const { repositories } = this.props;
+    const repositoryNodes = repositories
+      ? repositories.edges.map((edge) => edge.node)
+      : [];
+
+    const ItemSeparator = () => <View style={styles.separator} />;
+
+    return (
+      <>
+        <FlatList
+          data={repositoryNodes}
+          ItemSeparatorComponent={ItemSeparator}
+          renderItem={({ item }) => <RepositoryItem item={item} />}
+          ListHeaderComponent={this.RepositoryListHeader}
+        />
+      </>
+    );
+  }
 }
+
+// export const RepositoryListContainer = ({
+//   repositories,
+//   setVariables,
+//   searchQuery,
+//   setSearchQuery,
+// }) => {
+//   const [selectedPrinciple, setSelectedPrinciple] = useState('latest')
+
+//   // Get the nodes from the edges array
+//   const repositoryNodes = repositories
+//     ? repositories.edges.map((edge) => edge.node)
+//     : []
+
+//   const ItemSeparator = () => <View style={styles.separator} />
+
+//   const handleSearchBar = (value) => {
+//     setSearchQuery(value)
+//   }
+
+//   const RepositoryListHeader = () => {
+//     return (
+//       <>
+//         <Searchbar
+//           placeholder='Search'
+//           onChangeText={handleSearchBar}
+//           value={searchQuery}
+//         />
+//         <SortPicker
+//           selectedPrinciple={selectedPrinciple}
+//           setSelectedPrinciple={setSelectedPrinciple}
+//           setVariables={setVariables}
+//         />
+//       </>
+//     )
+//   }
+
+//   return (
+//     <>
+//       <FlatList
+//         data={repositoryNodes}
+//         ItemSeparatorComponent={ItemSeparator}
+//         renderItem={({ item }) => <RepositoryItem item={item} />}
+//         ListHeaderComponent={RepositoryListHeader}
+//       />
+//     </>
+//   )
+// }
 
 const RepositoryList = () => {
   const [variables, setVariables] = useState({
@@ -72,12 +144,17 @@ const RepositoryList = () => {
     orderDirection: 'DESC',
   })
 
-  const { repositories } = useRepositories(variables)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [value] = useDebounce(searchQuery, 500)
+
+  const { repositories } = useRepositories(variables, value)
 
   return (
     <RepositoryListContainer
       repositories={repositories}
       setVariables={setVariables}
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
     />
   )
 }
