@@ -1,14 +1,14 @@
+import { useEffect, useState } from 'react'
 import { View, Image, StyleSheet, Pressable, FlatList } from 'react-native'
 import Text from './Text'
-import RatingView from './RatingView'
 import theme from '../theme'
+import RatingView from './RatingView'
 import ReviewItem from './ReviewItem'
 
 import { useNavigate, useParams } from 'react-router-native'
 import { useQuery } from '@apollo/client'
-import { GET_SINGLE_REPOSITORY } from '../graphql/queries'
 
-import { useEffect, useState } from 'react'
+import { GET_SINGLE_REPOSITORY } from '../graphql/queries'
 
 import * as Linking from 'expo-linking'
 
@@ -64,7 +64,7 @@ const RepositoryItem = ({ item }) => {
   let { id } = useParams()
 
   const { data, loading } = useQuery(GET_SINGLE_REPOSITORY, {
-    variables: { repositoryId: id }, // Aquí es donde se pasan las variables
+    variables: { repositoryId: id },
   })
 
   useEffect(() => {

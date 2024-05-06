@@ -4,11 +4,12 @@ import { Route, Routes, Navigate } from 'react-router-native';
 import RepositoryList from './RepositoryList';
 import SignIn from './SignIn';
 import AppBar from './AppBar';
-import theme from '../theme';
 import RepositoryItem from './RepositoryItem';
 import CreateReview from './CreateReview';
 import SignUp from './SignUp';
 import MyReviewsList from './MyReviewsList';
+
+import theme from '../theme';
 
 const styles = StyleSheet.create({
   container: {

@@ -1,7 +1,6 @@
-// import { useNavigate } from 'react-router-native'
 import { Pressable, TextInput, View, StyleSheet } from 'react-native'
-import theme from '../theme'
 import Text from './Text'
+import theme from '../theme'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import useCreateReview from '../hooks/useCreateReview'
@@ -155,14 +154,11 @@ const CreateReview = () => {
         text: review,
       })
       if (data) {
-        console.log(data)
         navigate(`/${data.createReview.repositoryId}`)
       }
     } catch (e) {
       console.log(e)
     }
-
-    // console.log('Review created')
   }
 
   return <CreateReviewForm onSubmit={onSubmit} />
