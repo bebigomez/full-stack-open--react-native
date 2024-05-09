@@ -20,14 +20,14 @@ const styles = StyleSheet.create({
 
 export class RepositoryListContainer extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
-      selectedPrinciple: 'latest'
-    };
+      selectedPrinciple: 'latest',
+    }
   }
 
   handleSearchBar = (value) => {
-    this.props.setSearchQuery(value);
+    this.props.setSearchQuery(value)
   }
 
   RepositoryListHeader = () => {
@@ -40,7 +40,9 @@ export class RepositoryListContainer extends React.Component {
         />
         <SortPicker
           selectedPrinciple={this.state.selectedPrinciple}
-          setSelectedPrinciple={(selectedPrinciple) => this.setState({ selectedPrinciple })}
+          setSelectedPrinciple={(selectedPrinciple) =>
+            this.setState({ selectedPrinciple })
+          }
           setVariables={this.props.setVariables}
         />
       </>
@@ -48,12 +50,12 @@ export class RepositoryListContainer extends React.Component {
   }
 
   render() {
-    const { repositories } = this.props;
+    const { repositories } = this.props
     const repositoryNodes = repositories
       ? repositories.edges.map((edge) => edge.node)
-      : [];
+      : []
 
-    const ItemSeparator = () => <View style={styles.separator} />;
+    const ItemSeparator = () => <View style={styles.separator} />
 
     return (
       <>
@@ -62,9 +64,10 @@ export class RepositoryListContainer extends React.Component {
           ItemSeparatorComponent={ItemSeparator}
           renderItem={({ item }) => <RepositoryItem item={item} />}
           ListHeaderComponent={this.RepositoryListHeader}
+          onEndReached={this.props.onEndReach}
         />
       </>
-    );
+    )
   }
 }
 
@@ -77,7 +80,18 @@ const RepositoryList = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [value] = useDebounce(searchQuery, 500)
 
-  const { repositories } = useRepositories(variables, value)
+  const { repositories, fetchMore } = useRepositories(
+    {
+      first: 3,
+      orderBy: variables.orderBy,
+      orderDirection: variables.orderDirection,
+      searchKeyword: value
+    }
+  )
+
+  const onEndReach = () => {
+    fetchMore()
+  }
 
   return (
     <RepositoryListContainer
@@ -85,6 +99,7 @@ const RepositoryList = () => {
       setVariables={setVariables}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
+      onEndReach={onEndReach}
     />
   )
 }

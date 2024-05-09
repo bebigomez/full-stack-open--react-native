@@ -37,8 +37,8 @@ const ReviewItem = ({ review }) => {
             {review.rating}
           </Text>
         </View>
-        <View style={{ gap: 7 }}>
-        {isMyReviewsPage ? (
+        <View style={{ gap: 7, width: '80%' }}>
+          {isMyReviewsPage ? (
             <Text fontWeight={'bold'}>{review.repository.fullName}</Text>
           ) : (
             <Text fontWeight={'bold'}>{review.user.username}</Text>

@@ -1,15 +1,9 @@
-import { useEffect, useState } from 'react'
-import { View, Image, StyleSheet, Pressable, FlatList } from 'react-native'
+import { View, Image, StyleSheet, Pressable } from 'react-native'
 import Text from './Text'
 import theme from '../theme'
 import RatingView from './RatingView'
-import ReviewItem from './ReviewItem'
 
-import { useNavigate, useParams } from 'react-router-native'
-import { useQuery } from '@apollo/client'
-
-import { GET_SINGLE_REPOSITORY } from '../graphql/queries'
-
+import { useNavigate } from 'react-router-native'
 import * as Linking from 'expo-linking'
 
 const styles = StyleSheet.create({
@@ -58,74 +52,51 @@ const styles = StyleSheet.create({
   },
 })
 
-const RepositoryItem = ({ item }) => {
-  const [repository, setRepository] = useState(item)
-  const [reviews, setReviews] = useState([])
-  let { id } = useParams()
-
-  const { data, loading } = useQuery(GET_SINGLE_REPOSITORY, {
-    variables: { repositoryId: id },
-  })
-
-  useEffect(() => {
-    if (data && !loading) {
-      setReviews(
-        data.repository.reviews.edges
-          ? data.repository.reviews.edges.map((edge) => edge.node)
-          : []
-      )
-
-      setRepository(data.repository)
-    }
-  }, [data, loading])
+const RepositoryItem = ({ item, singleRepositoryView }) => {
+  const handleOpenInGitHub = () => {
+    Linking.openURL(item.url)
+  }
 
   const navigate = useNavigate()
 
-  const handleOpenInGitHub = () => {
-    Linking.openURL(repository.url)
-  }
-
   const handlePress = () => {
-    navigate(`/${repository.id}`)
+    navigate(`/${item.id}`)
   }
 
-  const ItemSeparator = () => <View style={styles.separator} />
+  return (
+    <Pressable onPress={handlePress}>
+      <View style={styles.repositoryContainer} testID={'repositoryItem'}>
+        <View style={styles.generalInfoContainer}>
+          <Image
+            style={styles.avatar}
+            source={{
+              uri: item.ownerAvatarUrl,
+            }}
+          />
 
-  const RepositoryInfo = () => {
-    return (
-      <Pressable onPress={handlePress}>
-        <View style={styles.repositoryContainer} testID={'repositoryItem'}>
-          <View style={styles.generalInfoContainer}>
-            <Image
-              style={styles.avatar}
-              source={{
-                uri: repository.ownerAvatarUrl,
-              }}
-            />
-
-            <View>
-              <Text fontWeight={'bold'} marginBottom={7}>
-                {repository.fullName}
-              </Text>
-              <Text color={'textSecondary'} marginBottom={7}>
-                {repository.description}
-              </Text>
-              <View style={styles.languageLabelContainer}>
-                <View style={styles.languageLabel}>
-                  <Text style={{ color: 'white' }}>{repository.language}</Text>
-                </View>
+          <View>
+            <Text fontWeight={'bold'} marginBottom={7}>
+              {item.fullName}
+            </Text>
+            <Text color={'textSecondary'} marginBottom={7}>
+              {item.description}
+            </Text>
+            <View style={styles.languageLabelContainer}>
+              <View style={styles.languageLabel}>
+                <Text style={{ color: 'white' }}>{item.language}</Text>
               </View>
             </View>
           </View>
+        </View>
 
-          <View style={styles.ratingsContainer}>
-            <RatingView count={repository.stargazersCount} label={'Stars'} />
-            <RatingView count={repository.forksCount} label={'Forks'} />
-            <RatingView count={repository.reviewCount} label={'Reviews'} />
-            <RatingView count={repository.ratingAverage} label={'Rating'} />
-          </View>
-
-          {id && (
+        <View style={styles.ratingsContainer}>
+          <RatingView count={item.stargazersCount} label={'Stars'} />
+          <RatingView count={item.forksCount} label={'Forks'} />
+          <RatingView count={item.reviewCount} label={'Reviews'} />
+          <RatingView count={item.ratingAverage} label={'Rating'} />
+        </View>
+        
+          {singleRepositoryView && (
             <>
               <Pressable onPress={handleOpenInGitHub} style={styles.button}>
                 <Text fontWeight={'bold'} style={{ color: 'white' }}>
@@ -134,25 +105,8 @@ const RepositoryItem = ({ item }) => {
               </Pressable>
             </>
           )}
-        </View>
-      </Pressable>
-    )
-  }
-
-  return repository ? (
-    <>
-      <FlatList
-        data={reviews}
-        renderItem={({ item }) => <ReviewItem review={item} />}
-        keyExtractor={({ id }) => id}
-        ItemSeparatorComponent={ItemSeparator}
-        ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
-      />
-    </>
-  ) : (
-    <View>
-      <Text>Loading...</Text>
-    </View>
+      </View>
+    </Pressable>
   )
 }
 
