@@ -22,7 +22,15 @@ This app lets users browse GitHub repositories, view repository details, create 
 
 ## Setup
 
-1. Clone the repository
+### Backend
+
+This app requires the [rate-repository-api](https://github.com/fullstack-hy2020/rate-repository-api) backend server. Clone the repository and follow its setup instructions to get the API running locally.
+
+The server uses SQLite (no additional database setup needed) and provides an Apollo GraphQL API for all application features.
+
+### Frontend
+
+1. Clone this repository
 
 2. Install dependencies:
    ```bash
@@ -31,16 +39,17 @@ This app lets users browse GitHub repositories, view repository details, create 
 
 3. Create a `.env` file in the root directory:
    ```
-   ENV=development
-   APOLLO_URI=your_graphql_api_endpoint
+   APOLLO_URI=http://localhost:4000/graphql
    ```
 
-4. Start the Expo development server:
+4. Make sure the backend server is running
+
+5. Start the Expo development server:
    ```bash
    npm start
    ```
 
-5. Run on your preferred platform:
+6. Run on your preferred platform:
    - Press `i` for iOS simulator
    - Press `a` for Android emulator
    - Scan the QR code with Expo Go app on your phone
